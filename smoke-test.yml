@@ -1,0 +1,20 @@
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: create deploy template
+      template:
+        src: templates/ip_list.j2
+        dest: templates/output.txt
+        mode: 0744
+
+- name: Clone git repo
+  hosts: master:slaves
+  gather_facts: false
+  roles:
+    - update_test_repo
+
+- name: Start Smoke Test
+  hosts: master
+  gather_facts: false
+  roles:
+    - run_simple_test

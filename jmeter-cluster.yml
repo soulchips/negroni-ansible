@@ -1,24 +1,33 @@
----
-  # Talk to all hosts just so we can learn about them...
-- name: Create a EC2 instance
-  hosts: localhost
+#- name: Check if instances in hosts exist and are up
+
+
+
+- name: Create AWS instance
+  hosts: local
+  connection: local
   gather_facts: False
-  vars:
-    keypair: qw-mackey
-    instance_type: t2.micro
-    image: ami-10547475
-    region: us-east-2
+  remote_user: ubuntu
+  roles:
+    - create_master
+    - create_slaves
+
+- hosts: master:slaves
+  gather_facts: False
+  become: true
   tasks:
-    - name: Launch instance
-      ec2:
-         key_name: "{{ keypair }}"
-         group: default
-         instance_type: "{{ instance_type }}"
-         image: "{{ image }}"
-         wait: true
-         region: "{{ region }}"
-         aws_access_key: AKIAJWKBGEFTIHWQQ2KQ
-         aws_secret_key: 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
-      register: ec2
-    - name: Print all ec2 variables
-      debug: var=ec2
+  - name: install python 2
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
+- name: Configure JMeter Instances
+  hosts: master:slaves
+  gather_facts: false
+  become: true
+  roles:
+    - configure_instances
+
+- name: Start JMeter Servers
+  hosts: slaves
+  gather_facts: false
+  become: true
+  roles:
+    - start_slave_servers

@@ -1,0 +1,20 @@
+---
+- name: Get public ip
+  shell: curl checkip.amazonaws.com
+  register: host_ip
+
+- set_fact: contents="{{ lookup('file', 'templates/output.txt') }}"
+
+- name: Run simple smoke test on {{ host_ip.stdout}}
+  command: "sh {{ JMETER_HOME }}/bin/jmeter -n -t {{ user_dir }}/gitlab_tests/breaktest.jmx -l {{ user_dir }}/results/results.jtl -Djava.rmi.server.hostname={{ host_ip.stdout}} -Dclient.rmi.localport=60000 -R{{contents}}"
+
+- name: Collect results
+  fetch:
+    src: '{{ user_dir }}/results/results.jtl'
+    dest: jenkins_workspace/results/
+    flat: yes
+
+- name: Clean results
+  file:
+   path: '{{ user_dir }}/results/results.jtl'
+   state: absent

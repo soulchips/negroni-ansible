@@ -1,0 +1,33 @@
+---
+  # Talk to all hosts just so we can learn about them...
+# - name: Create a EC2 instance
+#   hosts: localhost
+#   gather_facts: False
+#   vars:
+#     keypair: qw-mackey
+#     instance_type: t2.micro
+#     image: ami-10547475
+#     region: us-east-2
+#   tasks:
+#     - name: Launch instance
+#       ec2:
+#          key_name: "{{ keypair }}"
+#          group: default
+#          instance_type: "{{ instance_type }}"
+#          image: "{{ image }}"
+#          wait: true
+#          region: "{{ region }}"
+#          aws_access_key: AKIAJWKBGEFTIHWQQ2KQ
+#          aws_secret_key: 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
+#       register: ec2
+#     - name: Print all ec2 variables
+#       debug: var=ec2
+
+
+- hosts: slaves
+  remote_user: ubuntu
+  tasks:
+    - name: test connection
+      shell: curl checkip.amazonaws.com
+      register: host_ip
+    - debug: msg="{{ host_ip.stdout }}"

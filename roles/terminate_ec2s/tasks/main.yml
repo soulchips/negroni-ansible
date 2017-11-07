@@ -1,0 +1,35 @@
+---
+
+- name: Terminate all EC2 instances
+  ec2:
+    key_name: "{{ project_name }}-{{ env }}-key"
+    region: "{{ region }}"
+    instance_type: "{{ instance_type }}"
+    image: "{{ image }}"
+    wait: yes
+    instance_tags:
+        class: slave
+        class: master
+    exact_count: 0
+
+- name: insert/update "Match User" configuration block in /etc/ssh/sshd_config
+  blockinfile:
+    path: '{{ hostpath }}'
+    block: |
+      [local]
+      localhost
+
+      [master]
+
+
+      [slaves]
+
+
+      [all:vars]
+      user=root
+      ansible_ssh_private_key_file=/keys/aws-private.pem
+
+- name: 'Refresh hostfile so Ansible uses latest version'
+  meta: refresh_inventory
+
+

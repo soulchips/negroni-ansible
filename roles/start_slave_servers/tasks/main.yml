@@ -1,0 +1,13 @@
+---
+- name: Display public ip
+  shell: curl checkip.amazonaws.com
+  register: host_ip
+
+- debug: 
+    msg: "{{ JMETER_HOME }}/bin/jmeter-server -Dserver.rmi.localport=50000 -Dserver_port=1099 -Djava.rmi.server.hostname={{ host_ip.stdout }}"
+
+- name: Starting JMeter server on slaves
+  shell: nohup .{{ JMETER_HOME }}/bin/jmeter-server -Dserver.rmi.localport=50000 -Dserver_port=1099 -Djava.rmi.server.hostname={{ host_ip.stdout }} &
+
+
+

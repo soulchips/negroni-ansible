@@ -1,0 +1,15 @@
+---
+- name: Create the SSH public key file
+  copy: 
+    src: "{{ git_ssh_pub_key }}"
+    dest: "{{ user_dir }}/.ssh/id_rsa.pub"
+    mode: 0644
+
+- name: Create the SSH private key file
+  copy: 
+    src: "{{ git_ssh_priv_key }}"
+    dest: "{{ user_dir }}/.ssh/id_rsa"
+    mode: 0600
+
+- name: Setup the Git repo
+  git: repo={{ git_repo }} dest={{ git_project_path }} accept_hostkey=yes

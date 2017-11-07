@@ -1,0 +1,18 @@
+---
+user: root
+ansible_ssh_private_key_file: ../keys/aws-private.pem
+keypair: qw-mackey
+instance_type: t2.micro
+image: ami-10547475
+region: us-east-2
+aws_access_key: AKIAJWKBGEFTIHWQQ2KQ
+aws_secret_key: 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
+
+project_name: jmeter
+env: dev
+app_code_user: "ubuntu" # remote user
+hoststring: "ansible_ssh_private_key_file=/Users/quality-soul/Projects/automation/ansible/jmeter-aws/keys/aws-private.pem ansible_ssh_user=ubuntu"
+hostpath: "hosts"
+
+JMETER_HOME: /home/{{ app_code_user }}/jmeter/apache-jmeter-3.3
+user_dir: /home/{{ app_code_user }}

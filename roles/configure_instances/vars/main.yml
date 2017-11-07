@@ -1,0 +1,5 @@
+---
+git_repo: git@gitlab.com:Soulchips/jmeter-tests.git
+git_project_path: '{{ user_dir }}/gitlab_tests'
+git_ssh_pub_key: ./keys/git-ansible.pub
+git_ssh_priv_key: ./keys/git-ansible

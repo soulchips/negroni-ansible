@@ -1,0 +1,3 @@
+{% for host in groups['slaves'] -%}
+ {{ hostvars[host]['inventory_hostname'] }}{% if not loop.last %},{% endif %}
+{%- endfor %}

@@ -8,8 +8,8 @@
     image: "{{ image }}"
     wait: yes
     instance_tags:
-        class: slave
-        class: master
+        class: "{{ branch }}-slave"
+        class: "{{ branch }}-master"
     exact_count: 0
 
 - name: insert/update "Match User" configuration block in /etc/ssh/sshd_config

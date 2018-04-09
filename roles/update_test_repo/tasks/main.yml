@@ -12,4 +12,4 @@
     mode: 0600
 
 - name: Setup the Git repo
-  git: repo={{ git_repo }} dest={{ git_project_path }} accept_hostkey=yes
+  git: repo={{ git_repo }} dest={{ git_project_path }} accept_hostkey=yes version={{ branch }}

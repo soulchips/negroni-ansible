@@ -50,10 +50,10 @@
     image: "{{ image }}"
     wait: yes
     instance_tags:
-        class: slave
+        class: "{{ branch }}-slave"
     count_tag:
-        class: slave
-    exact_count: 2
+        class: "{{ branch }}-slave"
+    exact_count: "{{ slave_count | default('2') }}"
     vpc_subnet_id: subnet-7eb32305
   register: ec2
 

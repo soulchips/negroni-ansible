@@ -4,17 +4,23 @@
   register: host_ip
 
 - set_fact: contents="{{ lookup('file', 'templates/output.txt') }}"
+- set_fact: contents="{{ lookup('file', 'templates/output.txt') }}"
 
-- name: Run simple smoke test on {{ host_ip.stdout}}
-  command: "sh {{ JMETER_HOME }}/bin/jmeter -n -t {{ user_dir }}/gitlab_tests/breaktest.jmx -l {{ user_dir }}/results/results.jtl -Djava.rmi.server.hostname={{ host_ip.stdout}} -Dclient.rmi.localport=60000 -R{{contents}}"
+
+- name: get contents of file
+  command: cat {{ user_dir }}/gitlab_tests/runfile
+  register: testname
+
+- name: Run {{ testname.stdout }} test on {{ host_ip.stdout}}
+  command: "sh {{ JMETER_HOME }}/bin/jmeter -n -t {{ user_dir }}/gitlab_tests/{{ testname.stdout }}.jmx -l {{ user_dir }}/results/{{ testname.stdout }}-{{ branch }}-results.jtl -Djava.rmi.server.hostname={{ host_ip.stdout}} -Dclient.rmi.localport=60000 -R{{contents}} -Jusers={{load_per_instance}} -Jduration={{test_duration}}"
 
 - name: Collect results
   fetch:
-    src: '{{ user_dir }}/results/results.jtl'
+    src: '{{ user_dir }}/results/{{ testname.stdout }}-{{ branch }}-results.jtl'
     dest: jenkins_workspace/results/
     flat: yes
 
 - name: Clean results
   file:
-   path: '{{ user_dir }}/results/results.jtl'
+   path: '{{ user_dir }}/results/{{ testname.stdout }}-{{ branch }}-results.jtl'
    state: absent

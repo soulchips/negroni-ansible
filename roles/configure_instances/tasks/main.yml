@@ -27,44 +27,19 @@
 - name: Install JMeter
   command: chdir=/home/{{ app_code_user }}/jmeter {{ item }}
   with_items:
-    - wget http://www-eu.apache.org/dist//jmeter/binaries/apache-jmeter-3.3.tgz
-    - tar -xzf apache-jmeter-3.3.tgz
-    - rm apache-jmeter-3.3.tgz
-    - chown -R ubuntu:ubuntu apache-jmeter-3.3
+    - wget http://www-eu.apache.org/dist/jmeter/binaries/apache-jmeter-{{ jmeter_version }}.tgz
+    - tar -xzf apache-jmeter-{{ jmeter_version }}.tgz
+    - rm apache-jmeter-{{ jmeter_version }}.tgz
+    - chown -R ubuntu:ubuntu apache-jmeter-{{ jmeter_version }}
   args:
-    creates: /home/{{ app_code_user }}/jmeter/apache-jmeter-3.3
+    creates: /home/{{ app_code_user }}/jmeter/apache-jmeter{{ jmeter_version }}
 
 - name: Adding the $JMETER_HOME in the bashrc files
-  lineinfile: dest=/home/{{ app_code_user }}/.bashrc line='export JMETER_HOME=/home/{{ app_code_user }}/jmeter/apache-jmeter-3.3' insertafter='EOF' state=present
+  lineinfile: dest=/home/{{ app_code_user }}/.bashrc line='export JMETER_HOME=/home/{{ app_code_user }}/jmeter/apache-jmeter-{{ jmeter_version }}' insertafter='EOF' state=present
 
 - shell: . /home/{{ app_code_user }}/.bashrc && echo $JMETER_HOME
   args:
     executable: /bin/bash
-
-- name: Create test folder
-  file:
-    path: /home/{{ app_code_user }}/tests
-    owner: '{{ app_code_user }}'
-    group: '{{ app_code_user }}'
-    mode: 0755
-    state: directory
-
-# - name: Create repo folder
-#   file:
-#     path: /home/{{ app_code_user }}/gitlab_tests
-#     owner: '{{ app_code_user }}'
-#     group: '{{ app_code_user }}'
-#     mode: 0755
-#     state: directory
-
-# - name: Copy test files
-#   copy:
-#     src: /Users/quality-soul/Projects/test-scripts/jmeter/
-#     dest: /home/{{ app_code_user }}/tests/
-#     owner: '{{ app_code_user }}'
-#     group: '{{ app_code_user }}'
-#     directory_mode: yes
-#     mode: 0755
 
 - file:
     path: /home/{{ app_code_user }}/jmeter

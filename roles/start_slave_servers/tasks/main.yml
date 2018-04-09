@@ -6,8 +6,19 @@
 - debug: 
     msg: "{{ JMETER_HOME }}/bin/jmeter-server -Dserver.rmi.localport=50000 -Dserver_port=1099 -Djava.rmi.server.hostname={{ host_ip.stdout }}"
 
+- name: working dir
+  command: pwd
+  register: pwd
+
+- debug: 
+    msg: "{{ pwd.stdout }}"
+
+- name: Stop servers if they have started
+  command: ./jmeter/apache-jmeter-{{ jmeter_version }}/bin/shutdown.sh
+
 - name: Starting JMeter server on slaves
-  shell: nohup .{{ JMETER_HOME }}/bin/jmeter-server -Dserver.rmi.localport=50000 -Dserver_port=1099 -Djava.rmi.server.hostname={{ host_ip.stdout }} &
+  shell: 'nohup ./jmeter/apache-jmeter-{{ jmeter_version }}/bin/jmeter-server -Dserver.rmi.localport=50000 -Dserver_port=1099 -Djava.rmi.server.hostname={{ host_ip.stdout }} &'
 
-
+  #try running without nohup
+  #server may be starting and exiting, look into this
 

@@ -46,13 +46,13 @@
     key_name: "{{ project_name }}-{{ env }}-key"
     region: "{{ region }}"
     group_id: "{{ test_firewall.group_id }}"
-    instance_type: "{{ instance_type }}"
+    instance_type: "{{ master_type }}"
     image: "{{ image }}"
     wait: yes
     instance_tags:
-        class: master
+        class: "{{ branch }}-master"
     count_tag:
-        class: master
+        class: "{{ branch }}-master"
     exact_count: 1
     vpc_subnet_id: subnet-7eb32305
   register: ec2

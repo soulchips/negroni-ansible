@@ -1,0 +1,8 @@
+{
+	"master_type": "t2.small",
+	"slave_count": 3,
+	"repository": "git@gitlab.com:Soulchips/jmeter-tests.git",
+	"feature_branch": "fun-feature-05",
+	"load_per_instance": 50,
+	"test_duration": 60
+}

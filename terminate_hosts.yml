@@ -1,0 +1,7 @@
+- name: Terminate AWS instances
+  hosts: local
+  connection: local
+  gather_facts: False
+  remote_user: ubuntu
+  roles:
+    - terminate_ec2s

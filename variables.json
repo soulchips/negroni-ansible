@@ -4,5 +4,5 @@
 	"repository": "git@gitlab.com:Soulchips/jmeter-tests.git",
 	"feature_branch": "fun-feature-05",
 	"load_per_instance": 50,
-	"test_duration": 60
+	"test_duration": 300
 }

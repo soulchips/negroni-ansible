@@ -1,3 +1,4 @@
 keys/
 jenkins_workspace/
 *.retry
+.DS_Store

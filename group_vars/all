@@ -2,17 +2,18 @@
 user: root
 ansible_ssh_private_key_file: ../keys/aws-private.pem
 keypair: qw-mackey
-instance_type: t2.small
+instance_type: t2.micro
 image: ami-10547475
 region: us-east-2
-aws_access_key: AKIAJWKBGEFTIHWQQ2KQ
-aws_secret_key: 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
+aws_access_key: AKIAIV7Y2SWXW4HHRXDA
+aws_secret_key: 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
 test_repository: "{{ repository }}"
+project_path: /Users/qualitysoul/Projects/JMeter-Cluster/automation-server
 
 project_name: "{{ feature_branch | default('jmeter') }}"
 env: dev
 app_code_user: "ubuntu" # remote user
-hoststring: "ansible_ssh_private_key_file=/Users/quality-soul/Projects/automation/ansible/jmeter-aws/keys/aws-private.pem ansible_ssh_user=ubuntu"
+hoststring: "ansible_ssh_private_key_file={{ project_path }}/keys/aws-private.pem ansible_ssh_user=ubuntu"
 hostpath: "hosts"
 branch: "{{ project_name }}"
 

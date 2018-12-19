@@ -41,6 +41,11 @@
   args:
     executable: /bin/bash
 
+- name: Download JMeter-InfluxDB-Writer plugin
+  get_url:
+    url: https://github.com/NovatecConsulting/JMeter-InfluxDB-Writer/releases/download/v-1.2/JMeter-InfluxDB-Writer-plugin-1.2.jar
+    dest: /home/{{ app_code_user }}/jmeter/apache-jmeter-{{ jmeter_version }}/lib/ext
+
 - file:
     path: /home/{{ app_code_user }}/jmeter
     owner: '{{ app_code_user }}'
@@ -56,17 +61,17 @@
 - name: Adding the PUBLICIP in the bash_profile files
   lineinfile: dest=/home/{{ app_code_user }}/.profile line='PUBLICIP="{{ host_ip.stdout }}"; export PUBLICIP' insertafter='EOF' state=present
 
-- name: Add jenkins user
-  user:
-    name: jenkins
-    comment: "Jenkins User"
-    group: admin
+# - name: Add jenkins user
+#   user:
+#     name: jenkins
+#     comment: "Jenkins User"
+#     group: admin
 
-- name: Add jenkins ssh key
-  authorized_key:
-    user: jenkins
-    state: present
-    key: "{{ lookup('file', '/Users/jenkins/.ssh/id_rsa.pub') }}"
+# - name: Add jenkins ssh key
+#   authorized_key:
+#     user: jenkins
+#     state: present
+#     key: "{{ lookup('file', '/Users/jenkins/.ssh/id_rsa.pub') }}"
 
 
 # ant https://jmeter-plugins.org/get/

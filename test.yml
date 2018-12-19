@@ -24,10 +24,48 @@
 #       debug: var=ec2
 
 
-- hosts: slaves
-  remote_user: ubuntu
+# - hosts: slaves
+#   remote_user: ubuntu
+#   tasks:
+#     - name: test connection
+#       shell: curl checkip.amazonaws.com
+#       register: host_ip
+#     - debug: msg="{{ host_ip.stdout }}"
+
+- hosts: local
+  connection: local
+  gather_facts: no
+
   tasks:
-    - name: test connection
-      shell: curl checkip.amazonaws.com
-      register: host_ip
-    - debug: msg="{{ host_ip.stdout }}"
+    - name: Create ID storage files
+      copy:
+        content: ""
+        dest: "{{ item }}"
+        force: no
+        group: staff
+        owner: qualitysoul
+        mode: 0644
+      with_items:
+        - masterID
+        - slaveIDs
+        - allInstanceIDs
+
+      # - name: Create an EC2 key
+      #   ec2_key:
+      #     name: "{{ project_name }}-{{ env }}-key"
+      #     region: "{{ region }}"
+      #   register: ec2_key
+
+      # - name: Save private key
+      #   copy: content="{{ ec2_key.key.private_key }}" dest="/Users/qualitysoul/Projects/JMeter-Cluster/automation-server/keys/aws-private.pem" mode=0400
+      #   when: ec2_key.changed
+ 
+      # - name: Create a new EC2 key
+      #   ec2_key:
+      #       name: nixcraft-key
+      #       region: us-west-1
+      #   register: ec2_key_result
+ 
+      # - name: Save private key
+      #   copy: content="{{ ec2_key_result.key.private_key }}" dest="./aws.nixcraft.pem" mode=0600
+      #   when: ec2_key_result.changed

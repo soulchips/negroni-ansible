@@ -20,8 +20,8 @@
     - run_smoke_test
 
 
-- name: Start Dev Test
-  hosts: master
-  gather_facts: false
-  roles:
-    - run_simple_test
+# - name: Start Dev Test
+#   hosts: master
+#   gather_facts: false
+#   roles:
+#     - run_simple_test

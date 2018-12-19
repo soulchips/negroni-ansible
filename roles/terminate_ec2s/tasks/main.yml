@@ -1,16 +1,34 @@
 ---
 
-- name: Terminate all EC2 instances
+
+
+- name: Terminate master EC2 instance
   ec2:
     key_name: "{{ project_name }}-{{ env }}-key"
     region: "{{ region }}"
     instance_type: "{{ instance_type }}"
     image: "{{ image }}"
     wait: yes
+    instance_ids: "{{ item }}"
     instance_tags:
         class: "{{ branch }}-slave"
         class: "{{ branch }}-master"
-    exact_count: 0
+    state: "absent"
+  with_lines: cat "masterID"
+
+- name: Terminate slave EC2 instances
+  ec2:
+    key_name: "{{ project_name }}-{{ env }}-key"
+    region: "{{ region }}"
+    instance_type: "{{ instance_type }}"
+    image: "{{ image }}"
+    wait: yes
+    instance_ids: "{{ item }}"
+    instance_tags:
+        class: "{{ branch }}-slave"
+        class: "{{ branch }}-master"
+    state: "absent"
+  with_lines: cat "slaveIDs"
 
 - name: insert/update "Match User" configuration block in /etc/ssh/sshd_config
   blockinfile:
@@ -27,7 +45,16 @@
 
       [all:vars]
       user=root
-      ansible_ssh_private_key_file=/keys/aws-private.pem
+      ansible_ssh_private_key_file=/keys/jmeter-proto.pem
+
+- name: Delete ID files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - masterID
+    - slaveIDs
+    - allInstanceIDs
 
 - name: 'Refresh hostfile so Ansible uses latest version'
   meta: refresh_inventory

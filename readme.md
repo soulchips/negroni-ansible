@@ -6,7 +6,9 @@ A set of ansible scripts that spin up EC2 instances and configure them to become
 
 ## Dependancies
 - Ansible
-- AWS
+- AWS CLI
+    - install cli
+    - add to path
 
 ## Commands
 Spin up & configure EC2 instances

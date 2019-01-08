@@ -8,7 +8,7 @@ region: us-east-2
 aws_access_key: AKIAIV7Y2SWXW4HHRXDA
 aws_secret_key: 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
 test_repository: "{{ repository }}"
-project_path: /Users/qualitysoul/Projects/JMeter-Cluster/automation-server
+project_path: "{{ playbook_dir }}"
 
 project_name: "{{ feature_branch | default('jmeter') }}"
 env: dev

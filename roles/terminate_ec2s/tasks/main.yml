@@ -2,33 +2,29 @@
 
 
 
-- name: Terminate master EC2 instance
-  ec2:
-    key_name: "{{ project_name }}-{{ env }}-key"
-    region: "{{ region }}"
-    instance_type: "{{ instance_type }}"
-    image: "{{ image }}"
-    wait: yes
-    instance_ids: "{{ item }}"
-    instance_tags:
-        class: "{{ branch }}-slave"
-        class: "{{ branch }}-master"
-    state: "absent"
-  with_lines: cat "masterID"
+- set_fact:
+    instance_ids: []
 
-- name: Terminate slave EC2 instances
+- set_fact:
+    instance_ids: "{{ instance_ids }} + [ '{{ item }}' ]"
+  with_lines: cat allInstanceIDs
+
+- set_fact:
+    instance_id_string: "{{ instance_ids | join(',') }}"
+
+
+- name: Terminate JMeter Instances
   ec2:
     key_name: "{{ project_name }}-{{ env }}-key"
     region: "{{ region }}"
     instance_type: "{{ instance_type }}"
     image: "{{ image }}"
     wait: yes
-    instance_ids: "{{ item }}"
+    instance_ids: "{{ instance_id_string }}"
     instance_tags:
         class: "{{ branch }}-slave"
         class: "{{ branch }}-master"
     state: "absent"
-  with_lines: cat "slaveIDs"
 
 - name: insert/update "Match User" configuration block in /etc/ssh/sshd_config
   blockinfile:

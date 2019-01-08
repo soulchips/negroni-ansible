@@ -37,18 +37,32 @@
   gather_facts: no
 
   tasks:
-    - name: Create ID storage files
-      copy:
-        content: ""
-        dest: "{{ item }}"
-        force: no
-        group: staff
-        owner: qualitysoul
-        mode: 0644
-      with_items:
-        - masterID
-        - slaveIDs
-        - allInstanceIDs
+    - set_fact:
+        instance_ids: []
+
+    - set_fact:
+        instance_ids: "{{ instance_ids }} + [ '{{ item }}' ]"
+      with_lines: cat allInstanceIDs
+
+    - set_fact:
+        instance_id_string: "{{ instance_ids | join(',') }}"
+
+    - debug:
+        msg: "{{ instance_ids }}"
+
+
+    # - name: Create ID storage files
+    #   copy:
+    #     content: ""
+    #     dest: "{{ item }}"
+    #     force: no
+    #     group: staff
+    #     owner: qualitysoul
+    #     mode: 0644
+    #   with_items:
+    #     - masterID
+    #     - slaveIDs
+    #     - allInstanceIDs
 
       # - name: Create an EC2 key
       #   ec2_key:

@@ -1,4 +1,12 @@
+# Directories
 keys/
 jenkins_workspace/
-*.retry
+
+# OS Files
 .DS_Store
+
+# Files Generated per run
+masterID
+slaveIDs
+allInstanceIDs
+*.retry

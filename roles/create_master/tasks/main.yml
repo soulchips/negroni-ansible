@@ -29,7 +29,7 @@
     rules_egress:
       - proto: all
         cidr_ip: 0.0.0.0/0
-  register: test_firewall
+  register: jmeter_firewall
 
 - name: Create an EC2 key
   ec2_key:
@@ -45,7 +45,7 @@
   ec2:
     key_name: "{{ project_name }}-{{ env }}-key"
     region: "{{ region }}"
-    group_id: "{{ test_firewall.group_id }}"
+    group_id: "{{ jmeter_firewall.group_id }}"
     instance_type: "{{ master_type }}"
     image: "{{ image }}"
     wait: yes

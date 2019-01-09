@@ -18,38 +18,20 @@
         from_port: 8088
         to_port: 8088
         cidr_ip: 0.0.0.0/0
-      - proto: tcp  # JMeter communication
-        from_port: 50000
-        to_port: 50000
-        cidr_ip: 0.0.0.0/0
-      - proto: tcp  # JMeter communication
-        from_port: 60000
-        to_port: 60000
-        cidr_ip: 0.0.0.0/0
-      - proto: icmp
-        from_port: -1
-        to_port:  -1
+      - proto: tcp  # Grafana web-app
+        from_port: 3000
+        to_port: 3000
         cidr_ip: 0.0.0.0/0
     rules_egress:
       - proto: all
         cidr_ip: 0.0.0.0/0
-  register: test_firewall
+  register: influx_firewall
 
-- name: Create an EC2 key
-  ec2_key:
-    name: "{{ project_name }}-{{ env }}-key"
-    region: "{{ region }}"
-  register: ec2_key
-
-- name: Save private key
-  copy: content="{{ ec2_key.key.private_key }}" dest="{{ project_path }}/keys/aws-private.pem" mode=0400
-  when: ec2_key.changed
-
-- name: Create a master EC2 instance
+- name: Create an Influx/Grafana EC2 instance
   ec2:
     key_name: "{{ project_name }}-{{ env }}-key"
     region: "{{ region }}"
-    group_id: "{{ test_firewall.group_id }}"
+    group_id: "{{ influx_firewall.group_id }}"
     instance_type: "{{ master_type }}"
     image: "{{ image }}"
     wait: yes

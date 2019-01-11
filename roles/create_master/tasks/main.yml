@@ -74,6 +74,7 @@
   with_items:
     - masterID
     - slaveIDs
+    - influxID
     - allInstanceIDs
 
 - name: Store master instance ID

@@ -2,7 +2,7 @@
 
 
 
-- name: Create AWS instance
+- name: Create AWS instances
   hosts: local
   connection: local
   gather_facts: False
@@ -10,8 +10,9 @@
   roles:
     - create_master
     - create_slaves
+    - create_influx_grafana
 
-- hosts: master:slaves
+- hosts: master:slaves:influx
   gather_facts: False
   become: true
   tasks:
@@ -23,7 +24,7 @@
   gather_facts: false
   become: true
   roles:
-    - configure_instances
+    - configure_jmeter_instances
 
 - name: Start JMeter Servers
   hosts: slaves
@@ -31,3 +32,10 @@
   become: true
   roles:
     - start_slave_servers
+
+- name: Configure Influx Server
+  hosts: influx
+  gather_facts: false
+  become: true
+  roles:
+    - configure_influx

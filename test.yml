@@ -1,85 +1,38 @@
 ---
-  # Talk to all hosts just so we can learn about them...
-# - name: Create a EC2 instance
-#   hosts: localhost
-#   gather_facts: False
-#   vars:
-#     keypair: qw-mackey
-#     instance_type: t2.micro
-#     image: ami-10547475
-#     region: us-east-2
-#   tasks:
-#     - name: Launch instance
-#       ec2:
-#          key_name: "{{ keypair }}"
-#          group: default
-#          instance_type: "{{ instance_type }}"
-#          image: "{{ image }}"
-#          wait: true
-#          region: "{{ region }}"
-#          aws_access_key: AKIAJWKBGEFTIHWQQ2KQ
-#          aws_secret_key: 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
-#       register: ec2
-#     - name: Print all ec2 variables
-#       debug: var=ec2
 
 
-# - hosts: slaves
-#   remote_user: ubuntu
-#   tasks:
-#     - name: test connection
-#       shell: curl checkip.amazonaws.com
-#       register: host_ip
-#     - debug: msg="{{ host_ip.stdout }}"
+# - name: Create ID storage files
+#   hosts: local
+#   copy:
+#     content: ""
+#     dest: "{{ item }}"
+#     force: no
+#     group: staff
+#     owner: qualitysoul
+#     mode: 0644
+#   with_items:
+#     - influxID
+#     - allInstanceIDs
 
-- hosts: local
+- name: Create Influx instance
+  hosts: local
+  gather_facts: False
   connection: local
-  gather_facts: no
+  remote_user: ubuntu
+  roles:
+    - create_influx_grafana
 
+- hosts: influx
+  gather_facts: False
+  become: true
   tasks:
-    - set_fact:
-        instance_ids: []
-
-    - set_fact:
-        instance_ids: "{{ instance_ids }} + [ '{{ item }}' ]"
-      with_lines: cat allInstanceIDs
-
-    - set_fact:
-        instance_id_string: "{{ instance_ids | join(',') }}"
-
-    - debug:
-        msg: "{{ instance_ids }}"
+  - name: install python 2
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
 
 
-    # - name: Create ID storage files
-    #   copy:
-    #     content: ""
-    #     dest: "{{ item }}"
-    #     force: no
-    #     group: staff
-    #     owner: qualitysoul
-    #     mode: 0644
-    #   with_items:
-    #     - masterID
-    #     - slaveIDs
-    #     - allInstanceIDs
-
-      # - name: Create an EC2 key
-      #   ec2_key:
-      #     name: "{{ project_name }}-{{ env }}-key"
-      #     region: "{{ region }}"
-      #   register: ec2_key
-
-      # - name: Save private key
-      #   copy: content="{{ ec2_key.key.private_key }}" dest="/Users/qualitysoul/Projects/JMeter-Cluster/automation-server/keys/aws-private.pem" mode=0400
-      #   when: ec2_key.changed
- 
-      # - name: Create a new EC2 key
-      #   ec2_key:
-      #       name: nixcraft-key
-      #       region: us-west-1
-      #   register: ec2_key_result
- 
-      # - name: Save private key
-      #   copy: content="{{ ec2_key_result.key.private_key }}" dest="./aws.nixcraft.pem" mode=0600
-      #   when: ec2_key_result.changed
+- name: Configure Influx
+  hosts: influx
+  gather_facts: false
+  become: true
+  roles:
+    - configure_influx

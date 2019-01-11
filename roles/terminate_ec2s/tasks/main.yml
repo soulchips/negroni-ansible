@@ -39,9 +39,12 @@
       [slaves]
 
 
+      [influx]
+      
+
       [all:vars]
       user=root
-      ansible_ssh_private_key_file=/keys/jmeter-proto.pem
+      ansible_ssh_private_key_file=/keys/aws-private.pem
 
 - name: Delete ID files
   file:
@@ -51,6 +54,7 @@
     - masterID
     - slaveIDs
     - allInstanceIDs
+    - influxID
 
 - name: 'Refresh hostfile so Ansible uses latest version'
   meta: refresh_inventory

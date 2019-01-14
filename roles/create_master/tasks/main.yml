@@ -75,6 +75,7 @@
     - masterID
     - slaveIDs
     - influxID
+    - influxDNS
     - allInstanceIDs
 
 - name: Store master instance ID

@@ -1,7 +1,5 @@
 ---
 
-
-
 - set_fact:
     instance_ids: []
 
@@ -55,6 +53,7 @@
     - slaveIDs
     - allInstanceIDs
     - influxID
+    - influxDNS
 
 - name: 'Refresh hostfile so Ansible uses latest version'
   meta: refresh_inventory

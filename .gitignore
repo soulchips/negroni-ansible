@@ -8,5 +8,6 @@ jenkins_workspace/
 # Files Generated per run
 masterID
 slaveIDs
+influxID
 allInstanceIDs
 *.retry

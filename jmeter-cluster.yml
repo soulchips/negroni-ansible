@@ -33,9 +33,10 @@
   roles:
     - start_slave_servers
 
-- name: Configure Influx Server
+- name: Configure Influx/Grafana Server
   hosts: influx
   gather_facts: false
   become: true
   roles:
     - configure_influx
+    - configure_grafana

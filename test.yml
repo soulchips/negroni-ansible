@@ -1,18 +1,11 @@
 ---
 
 
-# - name: Create ID storage files
-#   hosts: local
-#   copy:
-#     content: ""
-#     dest: "{{ item }}"
-#     force: no
-#     group: staff
-#     owner: qualitysoul
-#     mode: 0644
-#   with_items:
-#     - influxID
-#     - allInstanceIDs
+- name: Create ID storage files
+  hosts: local
+  connection: local
+  tasks:
+    - shell: touch influxID allInstanceIDs influxDNS
 
 - name: Create Influx instance
   hosts: local
@@ -35,4 +28,4 @@
   gather_facts: false
   become: true
   roles:
-    - configure_influx
+    - configure_grafana

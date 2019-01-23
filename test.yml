@@ -5,7 +5,7 @@
   hosts: local
   connection: local
   tasks:
-    - shell: touch influxID allInstanceIDs influxDNS
+    - shell: touch influxID allInstanceIDs influxDNS keys/grafana_key
 
 - name: Create Influx instance
   hosts: local
@@ -23,9 +23,10 @@
     raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
 
 
-- name: Configure Influx
+- name: Configure Influx and Grafana
   hosts: influx
   gather_facts: false
   become: true
   roles:
+    - configure_influx
     - configure_grafana

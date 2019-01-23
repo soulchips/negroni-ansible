@@ -24,3 +24,20 @@
 
 - name: Start Grafana Server
   command: /bin/systemctl start grafana-server
+
+- name: Enable Influx Datasource
+  uri:
+    url: http://{{ lookup('file', 'influxDNS') }}:3000/api/datasources
+    method: POST
+    user: admin
+    password: admin
+    body:
+      name: "InfluxDB"
+      type: "influxdb"
+      url: "http://localhost:8086"
+      access: "proxy"
+      isDefault: true
+      database: "influx"
+    force_basic_auth: yes
+    status_code: 200
+    body_format: json

@@ -77,6 +77,7 @@
     - influxID
     - influxDNS
     - allInstanceIDs
+    - "keys/grafana_key"
 
 - name: Store master instance ID
   local_action: "lineinfile dest=masterID line=\"{{ item.id }}\""

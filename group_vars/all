@@ -11,7 +11,7 @@ test_repository: "{{ repository }}"
 project_path: "{{ playbook_dir }}"
 
 project_name: "{{ feature_branch | default('jmeter') }}"
-influxdb_name: "{{ db_name | default('influx') }}"
+influxdb_name: "{{ db_name | default('negroni') }}"
 env: dev
 app_code_user: "ubuntu" # remote user
 hoststring: "ansible_ssh_private_key_file={{ project_path }}/keys/aws-private.pem ansible_ssh_user=ubuntu"

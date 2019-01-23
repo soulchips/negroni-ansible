@@ -37,7 +37,7 @@
       url: "http://localhost:8086"
       access: "proxy"
       isDefault: true
-      database: "influx"
+      database: "{{ influxdb_name }}"
     force_basic_auth: yes
     status_code: 200
     body_format: json

@@ -5,8 +5,6 @@ keypair: qw-mackey
 instance_type: "{{ slave_type | default('t2.micro') }}"
 image: ami-10547475
 region: us-east-2
-aws_access_key: AKIAIV7Y2SWXW4HHRXDA
-aws_secret_key: 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
 test_repository: "{{ repository }}"
 project_path: "{{ playbook_dir }}"
 

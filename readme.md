@@ -8,7 +8,10 @@ A set of ansible scripts that spin up EC2 instances and configure them to become
 - Ansible
 - AWS CLI
     - install cli
+    - add credentials to cli
     - add to path
+
+
 
 ## Commands
 Spin up & configure EC2 instances

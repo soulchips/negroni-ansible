@@ -8,5 +8,12 @@ jenkins_workspace/
 # Files Generated per run
 masterID
 slaveIDs
+influxID
 allInstanceIDs
+influxDNS
 *.retry
+
+# Other
+test.yml
+test-another.yml
+test.py

@@ -1,0 +1,71 @@
+---
+
+- name: Create security group
+  ec2_group:
+    name: "influx_security_group"
+    description: "influx security group"
+    region: "{{ region }}"
+    rules:
+      - proto: tcp  # ssh
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp  # Influx client-server communication
+        from_port: 8086
+        to_port: 8086
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp  # Influx RPC service
+        from_port: 8088
+        to_port: 8088
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp  # Grafana web-app
+        from_port: 3000
+        to_port: 3000
+        cidr_ip: 0.0.0.0/0
+    rules_egress:
+      - proto: all
+        cidr_ip: 0.0.0.0/0
+  register: influx_firewall
+
+- name: Create an Influx/Grafana EC2 instance
+  ec2:
+    key_name: "{{ project_name }}-{{ env }}-key"
+    region: "{{ region }}"
+    group_id: "{{ influx_firewall.group_id }}"
+    instance_type: "{{ influx_type }}"
+    image: "{{ image }}"
+    wait: yes
+    instance_tags:
+        class: "{{ branch }}-influx-grafana"
+    count_tag:
+        class: "{{ branch }}-influx-grafana"
+    exact_count: 1
+    vpc_subnet_id: subnet-86bf9aee
+  register: ec2
+
+- name: Add to influx group
+  local_action: "lineinfile dest={{ hostpath }} insertafter=\"influx\" line=\"{{ item.public_ip }} ansible_ssh_private_key_file={{ project_path }}/keys/aws-private.pem ansible_ssh_user={{ app_code_user }}\""
+  with_items: '{{ ec2.instances }}'
+
+- wait_for: 'path={{ hostpath }} search_regex={{ hoststring }} timeout=120'
+
+- name: Store influx instance ID
+  local_action: "lineinfile dest=influxID line=\"{{ item.id }}\""
+  with_items: '{{ ec2.instances }}'
+
+- name: Store ID in all ID file
+  local_action: "lineinfile dest=allInstanceIDs line=\"{{ item.id }}\""
+  with_items: '{{ ec2.instances }}'
+
+- name: Store influx instance pubclic DNS
+  local_action: "lineinfile dest=influxDNS line=\"{{ item.public_dns_name }}\""
+  with_items: '{{ ec2.instances }}'
+
+- name: 'Wait for instance to initialize to SSH'
+  wait_for: 'host={{ item.public_dns_name }} port=22 delay=60 timeout=360 state=started'
+  with_items: '{{ ec2.instances }}'
+
+- name: 'Refresh hostfile so Ansible uses latest version'
+  meta: refresh_inventory
+
+

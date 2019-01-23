@@ -29,23 +29,14 @@
     rules_egress:
       - proto: all
         cidr_ip: 0.0.0.0/0
-  register: test_firewall
+  register: jmeter_firewall
 
-- name: Create an EC2 key
-  ec2_key:
-    name: "{{ project_name }}-{{ env }}-key"
-    region: "{{ region }}"
-  register: ec2_key
-
-- name: Save private key
-  copy: content="{{ ec2_key.key.private_key }}" dest="{{ project_path }}/keys/aws-private.pem" mode=0400
-  when: ec2_key.changed
 
 - name: Create slave EC2 instances
   ec2:
     key_name: "{{ project_name }}-{{ env }}-key"
     region: "{{ region }}"
-    group_id: "{{ test_firewall.group_id }}"
+    group_id: "{{ jmeter_firewall.group_id }}"
     instance_type: "{{ instance_type }}"
     image: "{{ image }}"
     wait: yes

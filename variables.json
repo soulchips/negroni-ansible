@@ -1,5 +1,7 @@
 {
 	"master_type": "t2.micro",
+	"slave_type": "t2.micro",
+	"influx_type": "t2.micro",
 	"slave_count": 3,
 	"repository": "git@gitlab.com:Soulchips/jmeter-tests.git",
 	"feature_branch": "fun-feature-05",

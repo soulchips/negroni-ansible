@@ -1,0 +1,38 @@
+---
+
+- name: Get host public ip
+  shell: curl checkip.amazonaws.com
+  register: influx_ip
+
+- name: Set authorized key for user ubuntu copying it from current user
+  authorized_key:
+    user: ubuntu
+    state: present
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+
+- name: Add influx Apt key
+  apt_key:
+    url: https://repos.influxdata.com/influxdb.key
+    state: present
+
+- shell: ". /etc/lsb-release"
+
+- shell: '"deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | sudo tee /etc/apt/sources.list.d/influxdb.list'
+
+- name: Install InfluxDB
+  apt:
+    name: influxdb
+    update_cache: yes
+
+- name: Install InfluxDB-Client
+  apt:
+    name: influxdb-client
+    update_cache: yes
+
+- debug: msg="the influx db ip is {{ influx_ip.stdout }}"
+
+- name: create influx database
+  uri:
+    url: "http://{{ influx_ip.stdout }}:8086/query?q=CREATE%20DATABASE%20{{ influxdb_name }}"
+    method: GET
+    warn: False

@@ -8,7 +8,11 @@ localhost
 [slaves]
 
 
+[influx]
+3.17.165.164 ansible_ssh_private_key_file=/Users/qualitysoul/Projects/JMeter-Cluster/automation-server/keys/aws-private.pem ansible_ssh_user=ubuntu
+
+
 [all:vars]
 user=root
-ansible_ssh_private_key_file=/keys/jmeter-proto.pem
+ansible_ssh_private_key_file=/keys/aws-private.pem
 # END ANSIBLE MANAGED BLOCK

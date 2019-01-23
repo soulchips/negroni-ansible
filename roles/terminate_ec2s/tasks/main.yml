@@ -1,34 +1,28 @@
 ---
 
+- set_fact:
+    instance_ids: []
+
+- set_fact:
+    instance_ids: "{{ instance_ids }} + [ '{{ item }}' ]"
+  with_lines: cat allInstanceIDs
+
+- set_fact:
+    instance_id_string: "{{ instance_ids | join(',') }}"
 
 
-- name: Terminate master EC2 instance
+- name: Terminate JMeter Instances
   ec2:
     key_name: "{{ project_name }}-{{ env }}-key"
     region: "{{ region }}"
     instance_type: "{{ instance_type }}"
     image: "{{ image }}"
     wait: yes
-    instance_ids: "{{ item }}"
+    instance_ids: "{{ instance_id_string }}"
     instance_tags:
         class: "{{ branch }}-slave"
         class: "{{ branch }}-master"
     state: "absent"
-  with_lines: cat "masterID"
-
-- name: Terminate slave EC2 instances
-  ec2:
-    key_name: "{{ project_name }}-{{ env }}-key"
-    region: "{{ region }}"
-    instance_type: "{{ instance_type }}"
-    image: "{{ image }}"
-    wait: yes
-    instance_ids: "{{ item }}"
-    instance_tags:
-        class: "{{ branch }}-slave"
-        class: "{{ branch }}-master"
-    state: "absent"
-  with_lines: cat "slaveIDs"
 
 - name: insert/update "Match User" configuration block in /etc/ssh/sshd_config
   blockinfile:
@@ -43,9 +37,12 @@
       [slaves]
 
 
+      [influx]
+      
+
       [all:vars]
       user=root
-      ansible_ssh_private_key_file=/keys/jmeter-proto.pem
+      ansible_ssh_private_key_file=/keys/aws-private.pem
 
 - name: Delete ID files
   file:
@@ -55,6 +52,8 @@
     - masterID
     - slaveIDs
     - allInstanceIDs
+    - influxID
+    - influxDNS
 
 - name: 'Refresh hostfile so Ansible uses latest version'
   meta: refresh_inventory

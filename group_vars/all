@@ -2,15 +2,15 @@
 user: root
 ansible_ssh_private_key_file: ../keys/aws-private.pem
 keypair: qw-mackey
-instance_type: t2.micro
+instance_type: "{{ slave_type | default('t2.micro') }}"
 image: ami-10547475
 region: us-east-2
-aws_access_key: AKIAIV7Y2SWXW4HHRXDA
-aws_secret_key: 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
 test_repository: "{{ repository }}"
-project_path: /Users/qualitysoul/Projects/JMeter-Cluster/automation-server
+project_path: "{{ playbook_dir }}"
 
 project_name: "{{ feature_branch | default('jmeter') }}"
+influxdb_name: "{{ db_name | default('negroni') }}"
+dashboard_config: "{{ grafana_dashboard | default('stand_in.json') }}"
 env: dev
 app_code_user: "ubuntu" # remote user
 hoststring: "ansible_ssh_private_key_file={{ project_path }}/keys/aws-private.pem ansible_ssh_user=ubuntu"

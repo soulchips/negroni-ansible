@@ -6,21 +6,60 @@
 - set_fact: contents="{{ lookup('file', 'templates/output.txt') }}"
 - set_fact: contents="{{ lookup('file', 'templates/output.txt') }}"
 
+- name: Create Reports Folder
+  file: 
+    path: /home/{{ app_code_user }}/html_reports
+    owner: '{{ app_code_user }}'
+    group: '{{ app_code_user }}'
+    mode: 0755 
+    state: directory
 
 - name: get contents of file
   command: cat {{ user_dir }}/gitlab_tests/runfile
   register: testname
 
-- name: Run simple smoke test on {{ host_ip.stdout}}
-  command: "sh {{ JMETER_HOME }}/bin/jmeter -n -t {{ user_dir }}/gitlab_tests/breaktest.jmx -l {{ user_dir }}/results/{{ branch }}-results.jtl -Djava.rmi.server.hostname={{ host_ip.stdout}} -Dclient.rmi.localport=60000 -R{{contents}}"
+# - debug:
+#     msg: "sh {{ JMETER_HOME }}/bin/jmeter -n -t {{ user_dir }}/gitlab_tests/breaktest.jmx -l {{ user_dir }}/results/{{ branch }}-results.jtl -e -o {{ user_dir }}/html_reports/ -Djava.rmi.server.hostname={{ host_ip.stdout}} -Dclient.rmi.localport=60000 -R{{contents}}"
 
-- name: Collect {{ branch }} results
+- name: Run simple smoke test on {{ host_ip.stdout}}
+  command: "sh {{ JMETER_HOME }}/bin/jmeter -n -t {{ user_dir }}/gitlab_tests/breaktest.jmx -l {{ user_dir }}/results/{{ branch }}-results.jtl -e -o {{ user_dir }}/html_reports/ -Djava.rmi.server.hostname={{ host_ip.stdout}} -Dclient.rmi.localport=60000 -R{{contents}}"
+  async: 70000
+  poll: 0
+  register: jmeter_sleeper
+
+- name: 'Check if test is done'
+  async_status:
+    jid: "{{ jmeter_sleeper.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  retries: 300
+
+# - name: Generate HTML reports
+#   command: "sh {{ JMETER_HOME }}/bin/jmeter -g {{ user_dir }}/results/{{ branch }}-results.jtl -o {{ user_dir }}/html_reports/"
+
+- name: Collect {{ branch }} results file
   fetch:
     src: '{{ user_dir }}/results/{{ branch }}-results.jtl'
     dest: jenkins_workspace/results/
     flat: yes
 
-- name: Clean {{ branch }} results
+- name: Clean {{ branch }} results file
   file:
    path: '{{ user_dir }}/results/{{ branch }}-results.jtl'
    state: absent
+
+# - synchronize: src=rsync://ubuntu@{{ host_ip.stdout}}/ dest=/tmp/foobar/ delete=yes recursive=yes mode=pull
+#   delegate_to: localhost
+# - name: Collect {{ branch }} html reports
+#   shell: (cd /{{ user_dir }}/html_reports/; find . -maxdepth 1 -type f) | cut -d'/' -f2
+#   register: files_to_copy
+
+# - fetch: 
+#     src: "{{ item }}"
+#     dest: html_reports/
+#   with_items: files_to_copy.stdout_lines
+
+# - name: Clean {{ branch }} results
+#   file:
+#    path: "{{ user_dir }}/html_reports/"
+#    state: absent

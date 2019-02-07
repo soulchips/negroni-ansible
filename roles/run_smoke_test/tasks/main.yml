@@ -18,11 +18,14 @@
   command: cat {{ user_dir }}/gitlab_tests/runfile
   register: testname
 
-# - debug:
-#     msg: "sh {{ JMETER_HOME }}/bin/jmeter -n -t {{ user_dir }}/gitlab_tests/breaktest.jmx -l {{ user_dir }}/results/{{ branch }}-results.jtl -e -o {{ user_dir }}/html_reports/ -Djava.rmi.server.hostname={{ host_ip.stdout}} -Dclient.rmi.localport=60000 -R{{contents}}"
+- set_fact: influx_db="http://{{ hostvars[item]['inventory_hostname'] }}:8086/write?db={{influxdb_name}}"
+  with_items: "{{ groups['influx'] }}"
+
+- debug:
+    msg: "sh {{ JMETER_HOME }}/bin/jmeter -n -t {{ user_dir }}/gitlab_tests/breaktest.jmx -l {{ user_dir }}/results/{{ branch }}-results.jtl -e -o {{ user_dir }}/html_reports/ -Djava.rmi.server.hostname={{ host_ip.stdout}} -Dclient.rmi.localport=60000 -R{{contents}} -Jusers={{load_per_instance}} -Jduration={{test_duration}} -Jinfluxdb={{influx_db}}"
 
 - name: Run simple smoke test on {{ host_ip.stdout}}
-  command: "sh {{ JMETER_HOME }}/bin/jmeter -n -t {{ user_dir }}/gitlab_tests/breaktest.jmx -l {{ user_dir }}/results/{{ branch }}-results.jtl -e -o {{ user_dir }}/html_reports/ -Djava.rmi.server.hostname={{ host_ip.stdout}} -Dclient.rmi.localport=60000 -R{{contents}}"
+  command: "sh {{ JMETER_HOME }}/bin/jmeter -n -t {{ user_dir }}/gitlab_tests/breaktest.jmx -l {{ user_dir }}/results/{{ branch }}-results.jtl -e -o {{ user_dir }}/html_reports/ -Djava.rmi.server.hostname={{ host_ip.stdout}} -Dclient.rmi.localport=60000 -R{{contents}} -Jusers={{load_per_instance}} -Jduration={{test_duration}} -Jinfluxdb={{influx_db}}"
   async: 70000
   poll: 0
   register: jmeter_sleeper
@@ -32,7 +35,7 @@
     jid: "{{ jmeter_sleeper.ansible_job_id }}"
   register: job_result
   until: job_result.finished
-  retries: 300
+  retries: "{{ test_retries }}"
 
 # - name: Generate HTML reports
 #   command: "sh {{ JMETER_HOME }}/bin/jmeter -g {{ user_dir }}/results/{{ branch }}-results.jtl -o {{ user_dir }}/html_reports/"

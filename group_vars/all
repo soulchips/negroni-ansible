@@ -16,6 +16,7 @@ app_code_user: "ubuntu" # remote user
 hoststring: "ansible_ssh_private_key_file={{ project_path }}/keys/aws-private.pem ansible_ssh_user=ubuntu"
 hostpath: "hosts"
 branch: "{{ project_name }}"
+test_retries: "{{ retries | default('300') }}"
 
 jmeter_version: 3.3
 JMETER_HOME: "/home/{{ app_code_user }}/jmeter/apache-jmeter-{{ jmeter_version }}"

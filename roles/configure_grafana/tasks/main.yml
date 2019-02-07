@@ -51,8 +51,7 @@
   register: grafana_influx
   failed_when: false
   changed_when: false
-# - debug:
-#     var: grafana_influx
+
 - name: Enable Influx Datasource
   uri:
     url: "http://{{ lookup('file', 'influxDNS') }}:3000/api/datasources"
@@ -77,8 +76,7 @@
     password: admin
     force_basic_auth: yes
   register: grafana_org
-# - debug:
-#     var: grafana_org
+
 - name: Create grafana API key
   uri:
     url: "http://{{ lookup('file', 'influxDNS') }}:3000/api/auth/keys"
@@ -92,8 +90,7 @@
     status_code: 200
     body_format: json
   register: grafana_key
-# - debug:
-#     var: grafana_key
+
 - name: copy dashboard json to server
   copy:
     src: "{{ project_path }}/dashboards/{{ dashboard_config }}"
@@ -108,5 +105,3 @@
     status_code: 200
     body_format: json
   register: dashboard_response
-# - debug:
-#     var: dashboard_response

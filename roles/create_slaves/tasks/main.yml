@@ -45,7 +45,7 @@
     count_tag:
         class: "{{ branch }}-slave"
     exact_count: "{{ slave_count | default('2') }}"
-    vpc_subnet_id: subnet-86bf9aee
+    vpc_subnet_id: subnet-845020fe
   register: ec2
 
 - name: Add to slave group

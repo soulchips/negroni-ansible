@@ -54,7 +54,7 @@
     count_tag:
         class: "{{ branch }}-master"
     exact_count: 1
-    vpc_subnet_id: subnet-86bf9aee
+    vpc_subnet_id: subnet-845020fe
   register: ec2
 
 - name: Add to master group
@@ -69,7 +69,7 @@
     dest: "{{ item }}"
     force: no
     group: staff
-    owner: qualitysoul
+    owner: "{{ local_user }}"
     mode: 0644
   with_items:
     - masterID

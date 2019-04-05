@@ -1,6 +1,7 @@
 # Directories
 keys/
 jenkins_workspace/
+env/
 
 # OS Files
 .DS_Store

@@ -99,7 +99,7 @@
   uri:
     url: "http://{{ lookup('file', 'influxDNS') }}:3000/api/dashboards/db"
     method: POST
-    body: "{{ lookup('file','/Users/qualitysoul/Projects/JMeter-Cluster/automation-server/dashboards/{{ dashboard_config }}') }}"
+    body: "{{ lookup('file','{{ project_path }}/dashboards/{{ dashboard_config }}') }}"
     headers:
       Authorization: "Bearer {{ grafana_key.json.key }}"
     status_code: 200

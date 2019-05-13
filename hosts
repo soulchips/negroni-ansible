@@ -1,6 +1,6 @@
 # BEGIN ANSIBLE MANAGED BLOCK
 [local]
-localhost
+localhost ansible_python_interpreter=/usr/local/bin/python
 
 [master]
 

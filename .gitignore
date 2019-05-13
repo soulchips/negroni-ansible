@@ -18,3 +18,4 @@ templates/output.txt
 # Other
 test-another.yml
 test.py
+*.pem

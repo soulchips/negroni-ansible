@@ -1,6 +1,7 @@
 # Directories
 keys/
 jenkins_workspace/
+env/
 
 # OS Files
 .DS_Store
@@ -12,6 +13,7 @@ influxID
 allInstanceIDs
 influxDNS
 *.retry
+templates/output.txt
 
 # Other
 test-another.yml
